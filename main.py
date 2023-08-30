@@ -87,7 +87,7 @@ def getRevSplit(segment,discount,increase):
                 INNER JOIN "bdm_rfm" as RF
                 ON RF.CUSTOMER_ID=C.customer_id WHERE RF.SEGMENT IN ({ls})
             UNION (
-                (SELECT 'ALL' as TYPE,P.product_manufacturer, O.ORDER_LINE_PRICE_WITH_TAXES as Sales, Sales as DISC ,O.ORDER_ID,                      C.CUSTOMER_ID,RF.SEGMENT
+                (SELECT 'ALL' as TYPE,P.product_manufacturer, O.ORDER_LINE_PRICE_WITH_TAXES as Sales, Sales as DISC ,O.ORDER_ID, C.CUSTOMER_ID,RF.SEGMENT
                 FROM "bdm_order_lines" as O 
                 INNER JOIN "bdm_products" as P 
                 ON P.PRODUCT_ID=O.ORDER_LINE_PRODUCT_ID
@@ -120,14 +120,19 @@ def getRevSplit(segment,discount,increase):
 query=f'''
     SELECT SEGMENT, COUNT(*) as c
     FROM "bdm_rfm" 
-    WHERE actual_state=true
     GROUP BY SEGMENT;'''
 df = session.sql(query).collect()
 cols=st.columns(5)
+cols2=st.columns(5)
 df=pd.DataFrame(df)
 for index, k in df.iterrows():
-    with cols[index]:
-        st.metric(k['SEGMENT'],k['C'])
+    if index<len(cols):
+        with cols[index]:
+            st.metric(k['SEGMENT'],k['C'])
+    else:
+        with cols2[5-index]:
+            st.metric(k['SEGMENT'],k['C'])
+
 query=f'''
     SELECT DISTINCT SEGMENT FROM "bdm_rfm";
 '''
@@ -160,11 +165,14 @@ if len(segTarget)>0:
     cur=dfAll.sum().REV
     sim=dfDisc.sum().REV
     co.metric("Revenue Current","{:,.0f}€".format(cur).replace(',', ' '))
-    co1.metric("Revenue Impact","{:,.0f}€".format(sim).replace(',', ' '),str(round(((sim/cur)-1)*100,2)) + "%")
+    co1.metric("Revenue Impact","{:,.0f}€".format(sim).replace(',', ' '),str(round(((sim/cur)-1)*100,2)+0.01) + "%")
     chartdef2={
         "chart": {
                 "type": 'column',
-                "zoomType": 'x'
+                "zoomType": 'x',
+                'zooming': {
+                    'mouseWheel': False
+                }
             },
             "xAxis": {
                 "type": 'category'
@@ -197,7 +205,6 @@ if len(segTarget)>0:
             
     }
     hct.streamlit_highcharts(chartdef2)
-    # with st.expander("Trigger Marketing Campaign"):
     st.markdown("## Trigger Marketing Campaign") 
     seg=",".join("'{0}'".format(w) for w in segTarget)
     query=f'''SELECT RFM.CUSTOMER_ID, RFM.SEGMENT, CUST.CUSTOMER_EMAIL, '{discount}%' as DISCOUNT
@@ -223,26 +230,3 @@ if len(segTarget)>0:
     )
     value
 #TODO
-# OK Scrollbar in Highchart
-# OK Monetary KPI
-# OK Show table with customer from segments and discount
-# OK Keboola Write Back
-# OK Gather Keboola creds
-# OK Layout the buckets and upload button
-# OK Publish App
-
-
-# OK Get Keboola Token, 
-# OK Get Snowflake account, 
-# OK Explain Scenario, 
-# OK Explain Keboola token, 
-
-
-# OK Show Table in Keboola
-# OK Generate Table Name
-# OK Set the DB NAME
-
-# Write list of steps for troubleshooting
-# OK Wrong first screenshot for keboola DWH
-
-#Publish doc in temp
