@@ -13,9 +13,9 @@ from snowflake.snowpark import Session
 session = Session.builder.configs(st.secrets).create()  
 
  
-dbname='HOL_DB'
-scname='TEST'
-keboola_URL=st.secrets['keboola_URL']
+db_name=st.secrets['db_name']
+schema_name=st.secrets['schema_name']
+keboola_URL="https://connection.north-europe.azure.keboola.com"
 keboola_key=st.secrets['keboola_key']
 
 query=f'''
