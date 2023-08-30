@@ -129,7 +129,7 @@ for index, k in df.iterrows():
     with cols[index]:
         st.metric(k['SEGMENT'],k['C'])
 query=f'''
-    SELECT DISTINCT SEGMENT FROM {dbname}.{scname}."bdm_rfm";
+    SELECT DISTINCT SEGMENT FROM "bdm_rfm";
 '''
 # segment = pd.read_sql(query, session)
 segment=df['SEGMENT'].unique()
