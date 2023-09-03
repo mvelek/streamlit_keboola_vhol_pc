@@ -10,7 +10,7 @@ from snowflake.snowpark import Session
 
 st.set_page_config(layout="wide")
 
-st.image("./img.png", width=102)
+st.image("img.png", width=102)
 
 session = Session.builder.configs(st.secrets).create()  
 
