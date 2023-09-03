@@ -8,7 +8,9 @@ import streamlit_highcharts as hct
 import keboola_api as kb
 from snowflake.snowpark import Session
 
-# st.sidebar.image("./img.png", width=102)
+st.set_page_config(layout="wide")
+
+st.image("./img.png", width=102)
 
 session = Session.builder.configs(st.secrets).create()  
 
@@ -19,11 +21,11 @@ keboola_URL="https://connection.north-europe.azure.keboola.com"
 keboola_key=st.secrets['keboola_key']
 
 query=f'''
-use database HOL_DB; 
+use database {db_name}; 
 '''
 session.sql(query).collect()
 query=f'''
-use schema TEST; 
+use schema {schema_name}; 
 '''
 session.sql(query).collect()
 
@@ -40,33 +42,7 @@ def saveFile(df):
         f.write(df.to_csv(index=False))
         return os.path.join(os.getcwd(),str(session.get_current_account().replace('"',''))+'.csv')
        
-st.markdown('''
-    <style>
-    .stButton > button:focus{
-        box-shadow:unset;
-    }
-    .main .block-container{
-        max-width: unset;
-        padding-left: 9em;
-        padding-right: 9em;
-        padding-top: 1.5em;
-        padding-bottom: 1em;
-        }
-    /*center metric label*/
-    [data-testid="stMetricLabel"] > div:nth-child(1) {
-        justify-content: center;
-    }
 
-    /*center metric value*/
-    [data-testid="stMetricValue"] > div:nth-child(1) {
-        justify-content: center;
-    }
-    [data-testid="stMetricDelta"] > div:nth-child(2){
-        justify-content: center;
-    }
-
-    </style>
-    ''', unsafe_allow_html=True)
 st.markdown("## RFM Segmentation")
 
 def getRevSplit(segment,discount,increase):
