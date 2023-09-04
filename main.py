@@ -15,6 +15,7 @@ path = os.path.dirname(__file__)
 my_file = path+'/img.png'
 st.image(my_file, width=102)
 
+st.secrets['account']=st.secrets['account'].replace('https;//','').replace('.snowflakecomputing.com','')
 session = Session.builder.configs(st.secrets).create()  
 
  
