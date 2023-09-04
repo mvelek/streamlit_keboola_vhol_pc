@@ -11,12 +11,19 @@ from snowflake.snowpark import Session
 st.set_page_config(layout="wide")
 
 
+
 path = os.path.dirname(__file__)
 my_file = path+'/img.png'
 st.image(my_file, width=102)
 
-st.secrets['account']=st.secrets['account'].replace('https;//','').replace('.snowflakecomputing.com','')
-session = Session.builder.configs(st.secrets).create()  
+connection_parameters = {
+    "account": st.secrets['account'].replace('https://','').replace('.snowflakecomputing.com',''),
+    "user": st.secrets['user'],
+    "password": st.secrets['password'],
+    "warehouse": st.secrets['warehouse'],
+}
+
+session = Session.builder.configs(connection_parameters).create()  
 
  
 db_name=st.secrets['db_name']
