@@ -123,8 +123,8 @@ for index, k in df.iterrows():
 query=f'''
     SELECT DISTINCT SEGMENT FROM "bdm_rfm";
 '''
-# segment = pd.read_sql(query, session)
-segment=df['SEGMENT'].unique()
+segment = pd.read_sql(query, session)
+# segment=df['SEGMENT'].unique()
 
 
 st.markdown("## Simulate Discount on Segments") 
